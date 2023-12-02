@@ -83,3 +83,11 @@ boot_straps|>
   geom_density()
 ```
 
+*Plot the distribution of logb
+```{r}
+boot_straps|>
+  filter(!is.na(logb))|>
+  ggplot(aes(x = logb)) +
+  geom_density()
+```
+
