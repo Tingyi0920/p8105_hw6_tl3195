@@ -113,6 +113,7 @@ boot_straps|>
   knitr::kable(digits = 3)
 ```
 
+The 95% CI for log(b1*b2) is (-9.134,-4.576). The 95% CI for r_squared is (0.882, 0.927).
 
 #Problem 3
 
@@ -147,10 +148,6 @@ Therefore, the final model should be:
 ```{r}
 final_model = lm(formula = bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birth_weight)
 
-final_model|>
-  broom::tidy()|>
-  knitr::kable(digits = 3)
-
 birth_weight|>
   add_predictions(final_model)|>
   add_residuals(final_model)|>
@@ -163,7 +160,7 @@ birth_weight|>
   )
 ```
 
-My final model is that baby’s sex, baby’s head circumference at birth (centimeters), baby’s length at birth (centimeteres), mother’s weight at delivery (pounds), family monthly income (in hundreds, rounded), gestational age in weeks, mother’s height (inches), mother’s race, number of live births prior to this pregnancy, mother’s pre-pregnancy weight (pounds), and average number of cigarettes smoked per day during pregnancy will have influence in birthweight. 
+My final model is that baby’s sex, baby’s head circumference at birth (centimeters), baby’s length at birth (centimeteres), mother’s weight at delivery (pounds), family monthly income (in hundreds, rounded), gestational age in weeks, mother’s height (inches), mother’s race, number of live births prior to this pregnancy, mother’s pre-pregnancy weight (pounds), and average number of cigarettes smoked per day during pregnancy will have influence in birthweight. All the variables are statistically significant to influence birthweight.
 
 Compare your model to two others:
 
@@ -198,4 +195,4 @@ cv_df|>
   ggplot(aes(x = model, y = rmse)) + geom_violin()
 ```
 
-
+Tthe final model, which I proposed by using backward selection, performs best among all the three models. The main effect model, which only contains length at birth and gestational age as predictors, performs worst because of its highest RMSE. The complex model, which contains head circumference, length, sex, and all interactions, performs good. However, I would still choose final model because it provides the best balance between low RMSE value and simplicity in model computation. 
