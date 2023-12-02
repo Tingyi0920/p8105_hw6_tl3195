@@ -72,8 +72,6 @@ boot_straps =
   )|>
   select(strap_number, r_squared, logb)
 
-boot_straps
-
 ```
 
 *Plot the distribution of r_squared
@@ -89,5 +87,25 @@ boot_straps|>
   filter(!is.na(logb))|>
   ggplot(aes(x = logb)) +
   geom_density()
+```
+
+The first plot shows the distribution of the r-squared values from the data, it peaks at around 0.91. The second plot shows the distribution of log(b1*b2) from the data, it peaks at around -5.5. Both the plots are left-skewed but the first plot appears slightly skewed to the left. 
+
+
+*95% CI for r_squared and logb
+```{r}
+boot_straps|>
+  filter(!is.na(logb))|>
+  pivot_longer(
+    r_squared:logb,
+    names_to = "term",
+    values_to = "estimate"
+  )|>
+  group_by(term)|>
+  summarize(
+    ci_lower = quantile(estimate, 0.025),
+    ci_upper = quantile(estimate, 0.075)
+  )|>
+  knitr::kable(digits = 3)
 ```
 
