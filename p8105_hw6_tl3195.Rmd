@@ -147,6 +147,10 @@ Therefore, the final model should be:
 ```{r}
 final_model = lm(formula = bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birth_weight)
 
+final_model|>
+  broom::tidy()|>
+  knitr::kable(digits = 3)
+
 birth_weight|>
   add_predictions(final_model)|>
   add_residuals(final_model)|>
@@ -158,6 +162,8 @@ birth_weight|>
     y = "Residuals"
   )
 ```
+
+My final model is that baby’s sex, baby’s head circumference at birth (centimeters), baby’s length at birth (centimeteres), mother’s weight at delivery (pounds), family monthly income (in hundreds, rounded), gestational age in weeks, mother’s height (inches), mother’s race, number of live births prior to this pregnancy, mother’s pre-pregnancy weight (pounds), and average number of cigarettes smoked per day during pregnancy will have influence in birthweight. 
 
 Compare your model to two others:
 
@@ -191,4 +197,5 @@ cv_df|>
   mutate(model = fct_inorder(model))|>
   ggplot(aes(x = model, y = rmse)) + geom_violin()
 ```
+
 
