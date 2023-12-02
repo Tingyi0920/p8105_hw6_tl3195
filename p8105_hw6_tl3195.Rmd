@@ -8,6 +8,10 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(viridis)
+library(mgcv)
+library(modelr)
+set.seed(8105)
+
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -104,8 +108,54 @@ boot_straps|>
   group_by(term)|>
   summarize(
     ci_lower = quantile(estimate, 0.025),
-    ci_upper = quantile(estimate, 0.075)
+    ci_upper = quantile(estimate, 0.975)
   )|>
   knitr::kable(digits = 3)
+```
+
+
+#Problem 3
+
+*Load and clean the data for regression analysis
+```{r}
+birth_weight = read_csv("./data/birthweight.csv")|>
+  janitor::clean_names()|>
+  mutate(
+    babysex = as.factor(babysex),
+    babysex = recode(babysex, `1` = "male", `2` = "female"),
+    frace = as.factor(frace),
+    frace = recode(frace, `1` = "White", `2` = "Black", `3` = "Asian", `4` = "Puerto Rican", 
+                   `8` = "Other", `9` = "Unknown"),
+    mrace = as.factor(mrace),
+    mrace = recode(mrace, `1` = "White", `2` = "Black", `3` = "Asian", `4` = "Puerto Rican", 
+                   `8` = "Other"),
+    malform = as.factor(malform),
+    malform = recode(malform, `0` = "absent", `1` = "present"),
+  )
+```
+
+*Selecting Variables 
+```{r}
+full_model = lm(bwt  ~., data = birth_weight)
+
+step(full_model, direction = 'backward', trace = FALSE)
+```
+
+When selecting variables, I use the backward selection method, which start with the full model and remove the least significant variables.
+
+Therefore, the final model should be:
+```{r}
+final_model = lm(formula = bwt ~ babysex + bhead + blength + delwt + fincome + gaweeks + mheight + mrace + parity + ppwt + smoken, data = birth_weight)
+
+birth_weight|>
+  add_predictions(final_model)|>
+  add_residuals(final_model)|>
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point() + 
+  labs(
+    title = "Residuals vs Fitted values",
+    x = "Fitted values",
+    y = "Residuals"
+  )
 ```
 
